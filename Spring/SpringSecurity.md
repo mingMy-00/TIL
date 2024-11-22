@@ -2,38 +2,46 @@
 
 ### Spring Security란?
 
-스프링 프레임워크를 기반으로 어플리케이션의 **인증**과 **인가**를 위한 강력한 기능을 제공하는 프레임 워크이다. REST API의 보안을 담당하며, 사용자 인증, 권한 부여 같은 다양한 보안 문제를 처리하는 데 사용된다.
+스프링 프레임워크를 기반으로 어플리케이션의 **`인증`**과 **`인가`**를 위한 강력한 기능을 제공하는 프레임 워크이다. 
+- REST API의 보안을 담당하며, 
+- 사용자 인증, 권한 부여 같은 다양한 보안 문제를 처리하는 데 사용된다.
 
 <br>
 
 Spring Security에는 3가지 중요한 개념이 있다.
 
-- **인증(Authentication)**
-- **인가(Authorization)**
-- **서블릿 필터(Servlet Filter)**
+- **`인증`(Authentication)**
+- **`인가`(Authorization)**
+- **`서블릿 필터`(Servlet Filter)**
 
 
 <br><br>
 
-### 인증이란?
+### ❓ 인증이란?
 
 **Authentication**
 
-**인증**은 사용자가 누구인지 확인하는 과정이다. 
-Spring Security에서는 사용자가 입력한 자격 증명(username, password)을 시스템에 저장된 자격 증명과 비교해 인증을 수행한다.
+**인증**은 접근하려는 유저가 누구인지 확인하는 절차입니당. <br>
+Spring Security에서는 사용자가 입력한 자격 증명(username, password)을 <br>
+시스템에 저장된 자격 증명과 비교해 `인증`을 수행합니다.
 
 <br><br>
 
-### 인가란?
+### ❓ 인가란?
 
 **Authorization**
 
-**인가**는 사용자가 특정 리소스에 접근할 수 있는 권한이 있는지를 결정하는 과정이다.
-Spring Security는 사용자에게 할당된 역할(Role)이나 권한(Authority)을 기반으로 인가를 수행한다. 예를 들어, 관리자만 접근할 수 있는 페이지가 있는 경우, Spring Security는 사용자가 관리자 권한을 가지고 있는지를 확인하고 접근을 허용하거나 차단한다.
+**인가**는 사용자가 특정 리소스에 접근할 수 있는 `권한이 있는지를 결정`하는 과정이다.<br>
+Spring Security는 사용자에게 할당된 역할(Role)이나 권한(Authority)을 기반으로 인가를 수행한다. <br> 예를 들어, 관리자만 접근할 수 있는 페이지가 있는 경우, Spring Security는 사용자가 관리자 권한을 가지고 있는지를 확인하고 접근을 허용하거나 차단한다.
+
+즉, 
+- 로그인이 완료된 사용자인지
+- 해당 경로의 접근은 누구에게 열려 있는지
+- 해당되는 role을 가지고있는지 말이죠 (admin과 일반 사용자를 구분할 때 좋겠져)
 
 <br><br>
 
-### 서블릿 필터
+### ❓ 서블릿 필터
 
 Servlet Filter
 
@@ -41,13 +49,15 @@ Servlet Filter
 
 ```
 💡서블릿 필터가 중요한 이유?
-서블릿 필터가 Spring MVC 패턴에서 보안 로직을 효과적으로 처리할 수 있는 위치를 제공해주기 때문이다.
+서블릿 필터가 Spring MVC 패턴에서 보안 로직을 효과적으로 처리할 수 있는 위치를 제공해주기 때문입니답.
 
-Spring mvc 패턴에서 요청이 들어오면 `dispatcherServlet`이 요청을 받고 알맞은 `controller`로 라우팅 한다. 
-이 흐름 사이에 보안 관련된 코드를 넣을곳이 없기 때문인다. `dispatcherServlet`은 요청 처리, 뷰 선택, 응답 
+Spring mvc 패턴에서 요청이 들어오면 `dispatcherServlet`이 요청을 받고 알맞은 `controller`로 라우팅 합니다.
+이 흐름 사이에 보안 관련된 코드를 넣을곳이 없기 때문이다. 
+`dispatcherServlet`은 요청 처리, 뷰 선택, 응답 
 생성 등의 MVC 관련 작업에 집중하는 것이 목적이고, `controller`는 실제 요청을 처리하는 부분이기 때문에 
-`controller`에 보안관련 코드는 적합하지 않다. 또한 보안 로직이 각 컨트롤러에 중복될 수 있다. 그렇기 때문에 
-서블릿에 요청이 도달하기 전에 보안 로직을 수행할 수 있는 서블릿 필터가 중요한 것이다.
+`controller`에 보안관련 코드는 적합하지 않다. 
+또한 보안 로직이 각 컨트롤러에 중복될 수 있다. 
+그렇기 때문에 서블릿에 요청이 도달하기 전에 보안 로직을 수행할 수 있는 서블릿 필터가 중요한 것이다.
 ```
 
 <br><br>
@@ -208,17 +218,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 ```java
+package com.example.testsecurity.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
 @Configuration
-@EnableWebSecurity 
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+
         http
-            .authorizeRequests()
-                .anyRequest().authenticated()
-            .and()
-            .formLogin().permitAll();
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/", "/login").permitAll()
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
+                        .anyRequest().authenticated()
+                );
 
         return http.build();
     }
@@ -392,3 +413,88 @@ Spring Security 인증의 핵심은 `SecurityContextHolder`이다.
 
 `ThreadLocal`을 사용함으로써 각 스레드는 `SecurityContextHolder`를 통해 자신만의 `SecurityContext`를 가지며, 다른 스레드의 `SecurityContext`에 접근하거나 영향을 주지 않는다.
 
+<br><br><br><br>
+
+## 흐름 정리
+![image.png](/Spring/img/SecurityFlow.png)
+
+    1️⃣ 사용자가 클라이언트에서 로그인 폼에 아디 비번을 써서 로그인 버튼을 누름(보통 post/login 의 엔드포인트로 요청이 감. 
+
+    (이 엔드포인트는 스프링 시큐리티에서 기본으로 제공하는 엔드포인트로 UsernamePasswordAuthenticationFilter에서 처리가 되기 때문에 컨트롤러에서 직접 처리되는 것이 아닌 스프링 시큐리티 필터체인에서 처리됨. )
+
+    2️⃣ 이 요청을 서블릿 컨테이너의 필터체인에서 스프링 시큐리티의 필터 체인으로 전달함. 
+
+    ⇒ 이 때 UsernamePasswordAuthenticationFilter(`AuthenticationFilter`) 가 이 요청을 가로채고 사용자가 제출한 아이디와 비번을 추출함. 
+
+    ⇒ UsernamePasswordAuthenticationFilter은 이 정보를 이용해서 `UsernamePasswordAuthenticationToken`이라는 객체를 생성함. 
+
+    ⇒ 이 객체는 사용자가 입력한 인증 정보를 담고 있음. (아이디, 비번)
+
+    3️⃣이 토큰을 `AuthenticationManager`로 전달해서 인증을 시도함. 
+
+    4️⃣ AuthenticationManager은 `AuthenticationProvider`를 통해 사용자 인증정보를 가져올 
+
+    5️⃣UserDetailsService 객체에게 사용자 아이디를 넘겨주고 DB에서 인증에 사용할 사용자 정보 
+    (사용자 아이디, 암호화된 패스워드 등) 을 
+
+    6️⃣ UserDetails(인증용 객체와 도메인 객체를 분리하지 앟기 위해서 실제 사용되는 도메인 객체에 UserDetails를 상속하기도 한다.) 라는 객체로 전달 받는다. 
+
+    7️⃣ 8️⃣ 9️⃣인증이 성공하면 AuthenticationProvider는 인증된 사용자의 정보를 포함한 Authentication 객체를 반환함. 
+
+    🔟 Authentication 객체는 SecurityContext에 저장되고 이는 SecurityContextHolder에 의해 관리되며 현재 스레드에서 전역적 접근이 가능함. 
+
+    이후…
+
+    - `SecurityContext`는 현재 사용자의 인증 정보를 담고, 이후 요청에서 이 정보를 사용하여 사용자의 인가를 처리함.
+    - 인증이 완료된 현시점 스프링 시큐리티는 기본적으로 사용자의 Authentication 객체를 세션에 저장해서 이후의 요청에서도 사용자가 인증된 상태임을 유지함. ⇒ 보안 설정에 따라 새로운 세션 생성이 될 수도 있고, 이는 세션 고정 공격을 방지하기 위한 조치임.
+    - 이후 사용자가 서버에 다른 요청을 보내면 스프링 시큐리티는 요청을 다시 필터체인으로 보냄.
+    - 이 때 SecurityContext에 저장된 Authentication 객체를 기반으로 FilterSecurityInterceptor가 사용자가 요청한 리소스에 접근할 권한이 있나 확인함. 권한이 있으면 요청이 정상 처리되고 그렇지 않으면 접근 거부 exception 방생.
+    - 인증과 인가 처리가 완료되면 요청은 컨트롤러로 전달되어 실제 비즈니스 로직이 처리됨.
+    - 컨트롤러는 처리된 결과를 응답으로 반환하며, 이 때 사용자의 인증 상태에 다라 개인화된 정보를 제공가능.
+    - 사용자가 로그아웃 하려하면 LogoutFilter가 이 요청을 가로채고
+    - SecurityContext에서 Authentication 객체를 제거함.
+    - 또, 세션을 무효화하여 사용자의 인증 정보를 서버에서 삭제함.
+
+
+
+<br><br><br><br>
+
+## 총 정리
+
+<br>
+# 1. Spring Security filter chain이란
+
+스프링 시큐리티는 여러 개의 필터로 구성된 필터체인을 사용하여 보안 기능을 처리합니당. 
+이 필터들은 특정 순서에 따라 실행되며, 인증, 인가, CSRF 보호 등의 다양한 보안 기능을 수행합니당. 
+
+- **SecurityContextPersistenceFilter**: 요청의 SecurityContext를 로드하거나 저장하는 역할을 합니다. 인증 정보를 유지하기 위해 사용됩니다.
+- **UsernamePasswordAuthenticationFilter**: 사용자 이름과 비밀번호로 인증을 시도하는 필터입니다. 기본적인 폼 기반 로그인 요청을 처리합니다.
+- **ExceptionTranslationFilter**: 인증이나 인가 과정에서 발생한 예외를 처리합니다.
+- **FilterSecurityInterceptor**: 인가(Authorization) 과정을 처리하며, 요청에 대한 접근 권한을 결정합니다.
+⇒ 필터 체인의 마지막에 있어서 인가를처리함. 
+요청된 URL이나 메소드에 접근 권한이 있는지를 확인하여, 접근이 허용되면 요청을 계속 진행하고, 그렇지 않으면 접근 거부를 발생시킴.
+
+# 2. Authentication과 Authorization ?
+
+스프링 시큐리티는 AuthenticationManager를 통해 사용자의 인증을 처리합니다. AuthenticationProvider가 실제 인증 작업을 수행하며, 여러 AuthenticationProvider를 설정할 수 있습니다. 인증이 성공하면 Authentication 객체가 SecurityContext에 저장됩니다. 이후 Authorization은 FilterSecurityInterceptor에 의해 처리되며, 사용자가 요청한 리소스에 접근할 수 있는지 결정합니다.
+
+- **AuthenticationManager**: 인증 요청을 처리하는 인터페이스입니다.
+- **AuthenticationProvider**: 실제 인증 작업을 담당하며, 여러 개의 Provider를 설정할 수 있습니다.
+- **SecurityContext**: 현재 사용자의 인증 정보를 저장하는 컨텍스트입니다.
+
+# **3. SecurityContext를 통해 어떤 정보를 관리하나요?**
+
+`SecurityContext`는 현재 인증된 사용자의 인증 정보를 관리하는 객체입니다. 
+이 객체는 주로 `Authentication` 객체를 포함하며, `Authentication` 객체에는 사용자의 인증된 상태와 권한(Role) 정보가 들어 있습니다. 
+`SecurityContext`는 요청마다 유지되며, 기본적으로 `SecurityContextHolder`를 통해 전역적으로 접근할 수 있습니다.
+
+# 4. **Authentication 객체가 생성된 이후에는 어떻게 동작이 진행되나요?**
+
+인증이 성공하여 `Authentication` 객체가 생성되면, 이 객체는 `SecurityContext`에 저장됩니다. 이후 요청에서 스프링 시큐리티는 `SecurityContext`를 참조하여 사용자가 인증된 상태인지 확인합니다. 또한, `Authentication` 객체에 포함된 권한 정보를 기반으로 인가 절차를 진행하며, 사용자가 요청한 리소스에 접근할 수 있는지를 결정합니다.
+
+<br><br>
+<hr>
+[https://velog.io/@soyeon207/SpringBoot-스프링-시큐리티란](https://velog.io/@soyeon207/SpringBoot-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%8B%9C%ED%81%90%EB%A6%AC%ED%8B%B0%EB%9E%80)
+
+[https://www.youtube.com/results?search_query=개발자+유미+시큐리티](https://www.youtube.com/results?search_query=%EA%B0%9C%EB%B0%9C%EC%9E%90+%EC%9C%A0%EB%AF%B8+%EC%8B%9C%ED%81%90%EB%A6%AC%ED%8B%B0)
+https://github.com/Afdddd/TIL/blob/main/Spring/SpringSecurity.md
